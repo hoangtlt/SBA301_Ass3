@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Author: HoangTLT
  */
 import { useEffect, useState } from 'react';
@@ -21,7 +21,7 @@ export default function App() {
   function logout() { clearSession(); setSession(null); navigate('/login'); }
 
   useEffect(() => {
-    function expire() { setSession(null); navigate('/login', { state: { message: 'PhiÃªn Ä‘Äƒng nháº­p háº¿t háº¡n hoáº·c tÃ i khoáº£n Ä‘Ã£ ngá»«ng hoáº¡t Ä‘á»™ng.' } }); }
+    function expire() { setSession(null); navigate('/login', { state: { message: 'Phiên đăng nhập hết hạn hoặc tài khoản đã ngừng hoạt động.' } }); }
     window.addEventListener('session-expired', expire);
     return () => window.removeEventListener('session-expired', expire);
   }, [navigate]);
@@ -32,16 +32,16 @@ export default function App() {
   return <>
     <header><div className="header-content">
       <Link to="/" className="brand">FU Mini Hotel</Link>
-      <nav aria-label="Äiá»u hÆ°á»›ng chÃ­nh">
-        <NavLink to="/" end>Danh sÃ¡ch phÃ²ng</NavLink>
-        {session?.role === 'CUSTOMER' && <><NavLink to="/bookings">Lá»‹ch sá»­ Ä‘áº·t phÃ²ng</NavLink><NavLink to="/profile">Há»“ sÆ¡</NavLink></>}
-        {session?.role === 'STAFF' && <><NavLink to="/staff/customers">KhÃ¡ch hÃ ng</NavLink><NavLink to="/staff/rooms">Quáº£n lÃ½ phÃ²ng</NavLink><NavLink to="/staff/bookings">ÄÆ¡n Ä‘áº·t phÃ²ng</NavLink></>}
-        {session ? <button className="secondary" onClick={logout}>ÄÄƒng xuáº¥t</button>
-          : <><NavLink to="/login">ÄÄƒng nháº­p</NavLink><NavLink to="/register">ÄÄƒng kÃ½</NavLink></>}
+      <nav aria-label="Điều hướng chính">
+        <NavLink to="/" end>Danh sách phòng</NavLink>
+        {session?.role === 'CUSTOMER' && <><NavLink to="/bookings">Lịch sử đặt phòng</NavLink><NavLink to="/profile">Hồ sơ</NavLink></>}
+        {session?.role === 'STAFF' && <><NavLink to="/staff/customers">Khách hàng</NavLink><NavLink to="/staff/rooms">Quản lý phòng</NavLink><NavLink to="/staff/bookings">Đơn đặt phòng</NavLink></>}
+        {session ? <button className="secondary" onClick={logout}>Đăng xuất</button>
+          : <><NavLink to="/login">Đăng nhập</NavLink><NavLink to="/register">Đăng ký</NavLink></>}
       </nav>
     </div></header>
     <main>
-      {session && <p className="user-line">Xin chÃ o, {session.fullName} Â· {session.role === 'STAFF' ? 'NhÃ¢n viÃªn' : 'KhÃ¡ch hÃ ng'}</p>}
+      {session && <p className="user-line">Xin chào, {session.fullName} · {session.role === 'STAFF' ? 'Nhân viên' : 'Khách hàng'}</p>}
       <Routes>
         <Route path="/" element={<RoomsPage session={session} />} />
         <Route path="/login" element={<LoginPage onLogin={setSession} />} />
@@ -51,9 +51,9 @@ export default function App() {
         <Route path="/staff/customers" element={staff(<StaffCustomersPage />)} />
         <Route path="/staff/rooms" element={staff(<StaffRoomsPage />)} />
         <Route path="/staff/bookings" element={staff(<StaffBookingsPage />)} />
-        <Route path="*" element={<><h1>KhÃ´ng tÃ¬m tháº¥y trang</h1><Link to="/">Vá» danh sÃ¡ch phÃ²ng</Link></>} />
+        <Route path="*" element={<><h1>Không tìm thấy trang</h1><Link to="/">Về danh sách phòng</Link></>} />
       </Routes>
     </main>
-    <footer>FU Mini Hotel Â· Há»‡ thá»‘ng quáº£n lÃ½ vÃ  Ä‘áº·t phÃ²ng</footer>
+    <footer>FU Mini Hotel · Hệ thống quản lý và đặt phòng</footer>
   </>;
 }

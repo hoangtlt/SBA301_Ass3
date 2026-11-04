@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Author: HoangTLT
  */
 package com.fuminihotel.config;
@@ -32,16 +32,16 @@ public class DataInitializer implements CommandLineRunner {
     @Transactional
     public void run(String... args) {
         if (types.count() == 0) {
-            addType("Single", "PhÃ²ng má»™t ngÆ°á»i");
-            addType("Double", "PhÃ²ng hai ngÆ°á»i");
-            addType("Family", "PhÃ²ng gia Ä‘Ã¬nh");
+            addType("Single", "Phòng một người");
+            addType("Double", "Phòng hai người");
+            addType("Family", "Phòng gia đình");
         }
         if (rooms.count() == 0) {
             var availableTypes = types.findAll();
             for (int i = 0; i < availableTypes.size(); i++) {
                 RoomInformation room = new RoomInformation();
                 room.setRoomNumber(String.valueOf(101 + i));
-                room.setRoomDetailDescription("PhÃ²ng cÃ³ Ä‘iá»u hÃ²a, Wi-Fi vÃ  phÃ²ng táº¯m riÃªng.");
+                room.setRoomDetailDescription("Phòng có điều hòa, Wi-Fi và phòng tắm riêng.");
                 room.setRoomMaxCapacity(i == 0 ? 1 : i == 1 ? 2 : 4);
                 room.setRoomType(availableTypes.get(i));
                 room.setRoomStatus(1);
@@ -51,7 +51,7 @@ public class DataInitializer implements CommandLineRunner {
         }
         if (!customers.existsByEmailAddressIgnoreCase("customer@example.com")) {
             Customer customer = new Customer();
-            customer.setCustomerFullName("Nguyá»…n VÄƒn An");
+            customer.setCustomerFullName("Nguyễn Văn An");
             customer.setEmailAddress("customer@example.com");
             customer.setTelephone("0901234567");
             customer.setCustomerBirthday(LocalDate.of(2000, 1, 1));

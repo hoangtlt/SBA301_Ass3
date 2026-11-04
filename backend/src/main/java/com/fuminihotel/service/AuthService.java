@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Author: HoangTLT
  */
 package com.fuminihotel.service;
@@ -51,7 +51,7 @@ public class AuthService {
     }
 
     private ApiException invalidLogin() {
-        return new ApiException(UNAUTHORIZED, "Email hoáº·c máº­t kháº©u khÃ´ng Ä‘Ãºng, hoáº·c tÃ i khoáº£n Ä‘Ã£ bá»‹ khÃ³a");
+        return new ApiException(UNAUTHORIZED, "Email hoặc mật khẩu không đúng, hoặc tài khoản đã bị khóa");
     }
 
     private AuthResponse issueToken(String subject, String role, Long customerId, String name) {

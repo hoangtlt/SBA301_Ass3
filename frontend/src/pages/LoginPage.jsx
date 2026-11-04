@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Author: HoangTLT
  */
 import { useState } from 'react';
@@ -23,13 +23,13 @@ export default function LoginPage({ onLogin }) {
   }
 
   return <section className="panel narrow">
-    <h1>ÄÄƒng nháº­p</h1><p>DÃ¹ng email vÃ  máº­t kháº©u Ä‘á»ƒ vÃ o tÃ i khoáº£n.</p>
+    <h1>Đăng nhập</h1><p>Dùng email và mật khẩu để vào tài khoản.</p>
     {message && <p className="message" role="alert">{message}</p>}
     <form onSubmit={submit}>
       <label>Email<input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required maxLength={100} autoComplete="username" /></label>
-      <label>Máº­t kháº©u<input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required maxLength={72} autoComplete="current-password" /></label>
-      <button disabled={busy}>{busy ? 'Äang Ä‘Äƒng nháº­p...' : 'ÄÄƒng nháº­p'}</button>
+      <label>Mật khẩu<input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required maxLength={72} autoComplete="current-password" /></label>
+      <button disabled={busy}>{busy ? 'Đang đăng nhập...' : 'Đăng nhập'}</button>
     </form>
-    <p>ChÆ°a cÃ³ tÃ i khoáº£n? <Link to="/register">ÄÄƒng kÃ½</Link></p>
+    <p>Chưa có tài khoản? <Link to="/register">Đăng ký</Link></p>
   </section>;
 }

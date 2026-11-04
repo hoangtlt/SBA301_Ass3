@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Author: HoangTLT
  */
 import { useEffect, useState } from 'react';
@@ -14,8 +14,8 @@ export default function BookingsPage() {
       .catch((error) => setMessage(errorMessage(error))).finally(() => setLoading(false));
   }, []);
 
-  return <section className="panel"><h1>Lá»‹ch sá»­ Ä‘áº·t phÃ²ng</h1>
+  return <section className="panel"><h1>Lịch sử đặt phòng</h1>
     {message && <p className="message" role="alert">{message}</p>}
-    {loading ? <p>Äang táº£i...</p> : <BookingTable bookings={bookings} />}
+    {loading ? <p>Đang tải...</p> : <BookingTable bookings={bookings} />}
   </section>;
 }

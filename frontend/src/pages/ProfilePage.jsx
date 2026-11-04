@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Author: HoangTLT
  */
 import { useEffect, useState } from 'react';
@@ -20,13 +20,13 @@ export default function ProfilePage() {
     event.preventDefault(); setBusy(true); setMessage('');
     try {
       await api.put('/customer/profile', form);
-      setForm({ ...form, password: '' }); setMessage('ÄÃ£ cáº­p nháº­t há»“ sÆ¡.');
+      setForm({ ...form, password: '' }); setMessage('Đã cập nhật hồ sơ.');
     } catch (error) { setMessage(errorMessage(error)); }
     finally { setBusy(false); }
   }
 
-  return <section className="panel"><h1>Há»“ sÆ¡ cá»§a tÃ´i</h1>
+  return <section className="panel"><h1>Hồ sơ của tôi</h1>
     {message && <p className="message" role="status">{message}</p>}
-    {form ? <CustomerForm form={form} setForm={setForm} onSubmit={submit} editing busy={busy} /> : <p>Äang táº£i há»“ sÆ¡...</p>}
+    {form ? <CustomerForm form={form} setForm={setForm} onSubmit={submit} editing busy={busy} /> : <p>Đang tải hồ sơ...</p>}
   </section>;
 }

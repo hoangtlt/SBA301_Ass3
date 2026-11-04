@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Author: HoangTLT
  */
 package com.fuminihotel.service;
@@ -29,9 +29,9 @@ public class RoomService {
     @Transactional(readOnly = true)
     public List<RoomResponse> search(String keyword, boolean staff, LocalDate startDate, LocalDate endDate) {
         if ((startDate == null) != (endDate == null))
-            throw new ApiException(BAD_REQUEST, "Cáº§n nháº­p cáº£ ngÃ y nháº­n vÃ  tráº£ phÃ²ng");
+            throw new ApiException(BAD_REQUEST, "Cần nhập cả ngày nhận và trả phòng");
         if (startDate != null && (startDate.isBefore(LocalDate.now()) || !endDate.isAfter(startDate))) {
-            throw new ApiException(BAD_REQUEST, "NgÃ y tráº£ pháº£i sau ngÃ y nháº­n vÃ  ngÃ y nháº­n khÃ´ng Ä‘Æ°á»£c trong quÃ¡ khá»©");
+            throw new ApiException(BAD_REQUEST, "Ngày trả phải sau ngày nhận và ngày nhận không được trong quá khứ");
         }
         return rooms.findByRoomNumberContainingIgnoreCaseOrderByRoomNumberAsc(keyword).stream()
                 .filter(r -> staff || r.getRoomStatus() == 1)
@@ -43,7 +43,7 @@ public class RoomService {
     @Transactional(readOnly = true)
     public RoomResponse get(Long id) {
         RoomInformation room = rooms.findById(id).filter(r -> r.getRoomStatus() == 1)
-                .orElseThrow(() -> new ApiException(NOT_FOUND, "KhÃ´ng tÃ¬m tháº¥y phÃ²ng Ä‘ang hoáº¡t Ä‘á»™ng"));
+                .orElseThrow(() -> new ApiException(NOT_FOUND, "Không tìm thấy phòng đang hoạt động"));
         return ResponseMapper.room(room);
     }
 
@@ -55,17 +55,17 @@ public class RoomService {
     public RoomResponse save(Long id, RoomRequest request) {
         RoomInformation room = id == null ? new RoomInformation()
                 : rooms.findByIdForUpdate(id)
-                        .orElseThrow(() -> new ApiException(NOT_FOUND, "KhÃ´ng tÃ¬m tháº¥y phÃ²ng"));
+                        .orElseThrow(() -> new ApiException(NOT_FOUND, "Không tìm thấy phòng"));
         String roomNumber = request.roomNumber().trim();
         if ((id == null || !room.getRoomNumber().equalsIgnoreCase(roomNumber))
                 && rooms.existsByRoomNumberIgnoreCase(roomNumber)) {
-            throw new ApiException(CONFLICT, "Sá»‘ phÃ²ng Ä‘Ã£ tá»“n táº¡i");
+            throw new ApiException(CONFLICT, "Số phòng đã tồn tại");
         }
         room.setRoomNumber(roomNumber);
         room.setRoomDetailDescription(request.roomDetailDescription());
         room.setRoomMaxCapacity(request.roomMaxCapacity());
         room.setRoomType(roomTypes.findById(request.roomTypeId())
-                .orElseThrow(() -> new ApiException(BAD_REQUEST, "Loáº¡i phÃ²ng khÃ´ng tá»“n táº¡i")));
+                .orElseThrow(() -> new ApiException(BAD_REQUEST, "Loại phòng không tồn tại")));
         room.setRoomStatus(request.roomStatus());
         room.setRoomPricePerDay(request.roomPricePerDay());
         return ResponseMapper.room(rooms.save(room));
@@ -73,12 +73,12 @@ public class RoomService {
 
     public String delete(Long id) {
         RoomInformation room = rooms.findByIdForUpdate(id)
-                .orElseThrow(() -> new ApiException(NOT_FOUND, "KhÃ´ng tÃ¬m tháº¥y phÃ²ng"));
+                .orElseThrow(() -> new ApiException(NOT_FOUND, "Không tìm thấy phòng"));
         if (details.existsByRoomInformationRoomId(id)) {
             room.setRoomStatus(0);
-            return "PhÃ²ng Ä‘Ã£ cÃ³ lá»‹ch sá»­ Ä‘áº·t: Ä‘Ã£ chuyá»ƒn sang ngá»«ng hoáº¡t Ä‘á»™ng";
+            return "Phòng đã có lịch sử đặt: đã chuyển sang ngừng hoạt động";
         }
         rooms.delete(room);
-        return "ÄÃ£ xÃ³a phÃ²ng chÆ°a cÃ³ lá»‹ch sá»­ Ä‘áº·t";
+        return "Đã xóa phòng chưa có lịch sử đặt";
     }
 }

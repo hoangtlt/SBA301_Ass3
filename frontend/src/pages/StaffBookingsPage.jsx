@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Author: HoangTLT
  */
 import { useEffect, useState } from 'react';
@@ -33,13 +33,13 @@ export default function StaffBookingsPage() {
 
   async function create(event) {
     event.preventDefault();
-    if (!selected.length) { setMessage('Chá»n Ã­t nháº¥t má»™t phÃ²ng.'); return; }
+    if (!selected.length) { setMessage('Chọn ít nhất một phòng.'); return; }
     setBusy(true); setMessage('');
     try {
       const body = { customerId: Number(customerId), rooms: selected.map((roomId) => ({ roomId, startDate, endDate })) };
       if (editingId) await api.put(`/staff/bookings/${editingId}`, body);
       else await api.post('/staff/bookings', body);
-      setSelected([]); setShowForm(false); setMessage('ÄÃ£ lÆ°u Ä‘Æ¡n Ä‘áº·t phÃ²ng.'); await load();
+      setSelected([]); setShowForm(false); setMessage('Đã lưu đơn đặt phòng.'); await load();
     } catch (error) { setMessage(errorMessage(error)); }
     finally { setBusy(false); }
   }
@@ -48,21 +48,21 @@ export default function StaffBookingsPage() {
     setEditingId(booking.bookingReservationId); setCustomerId(String(booking.customerId));
     setStartDate(booking.bookingDetails[0].startDate); setEndDate(booking.bookingDetails[0].endDate);
     setSelected(booking.bookingDetails.map((d) => d.roomId)); setShowForm(true);
-    setMessage('NgÃ y nháº­n vÃ  ngÃ y tráº£ trong form sáº½ Ã¡p dá»¥ng cho táº¥t cáº£ phÃ²ng Ä‘Ã£ chá»n.');
+    setMessage('Ngày nhận và ngày trả trong form sẽ áp dụng cho tất cả phòng đã chọn.');
   }
 
   async function changeStatus(id, nextStatus) {
-    if (!window.confirm(`Chuyá»ƒn Ä‘Æ¡n #${id} sang "${bookingStatus[nextStatus]}"?`)) return;
+    if (!window.confirm(`Chuyển đơn #${id} sang "${bookingStatus[nextStatus]}"?`)) return;
     setBusy(true); setMessage('');
-    try { await api.patch(`/staff/bookings/${id}/status`, { bookingStatus: nextStatus }); setMessage('ÄÃ£ cáº­p nháº­t tráº¡ng thÃ¡i.'); await load(); }
+    try { await api.patch(`/staff/bookings/${id}/status`, { bookingStatus: nextStatus }); setMessage('Đã cập nhật trạng thái.'); await load(); }
     catch (error) { setMessage(errorMessage(error)); }
     finally { setBusy(false); }
   }
 
   async function remove(id) {
-    if (!window.confirm(`XÃ³a Ä‘Æ¡n Ä‘Ã£ há»§y #${id}?`)) return;
+    if (!window.confirm(`Xóa đơn đã hủy #${id}?`)) return;
     setBusy(true); setMessage('');
-    try { await api.delete(`/staff/bookings/${id}`); setMessage('ÄÃ£ xÃ³a Ä‘Æ¡n.'); await load(); }
+    try { await api.delete(`/staff/bookings/${id}`); setMessage('Đã xóa đơn.'); await load(); }
     catch (error) { setMessage(errorMessage(error)); }
     finally { setBusy(false); }
   }
@@ -70,20 +70,20 @@ export default function StaffBookingsPage() {
   const visibleBookings = bookings.filter((b) => (!status || b.bookingStatus === status)
     && (`${b.bookingReservationId} ${b.customerFullName}`.toLowerCase().includes(keyword.toLowerCase())));
 
-  return <section className="panel"><h1>Quáº£n lÃ½ Ä‘Æ¡n Ä‘áº·t phÃ²ng</h1>
-    <div className="filters"><label>TÃ¬m mÃ£ Ä‘Æ¡n hoáº·c tÃªn khÃ¡ch<input value={keyword} onChange={(e) => setKeyword(e.target.value)} /></label>
-      <label>Tráº¡ng thÃ¡i<select value={status} onChange={(e) => setStatus(e.target.value)}><option value="">Táº¥t cáº£</option>{Object.entries(bookingStatus).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select></label>
-      <button onClick={() => { setEditingId(null); setCustomerId(''); setSelected([]); setStartDate(''); setEndDate(''); setShowForm(true); }}>Táº¡o Ä‘Æ¡n táº¡i quáº§y</button>
+  return <section className="panel"><h1>Quản lý đơn đặt phòng</h1>
+    <div className="filters"><label>Tìm mã đơn hoặc tên khách<input value={keyword} onChange={(e) => setKeyword(e.target.value)} /></label>
+      <label>Trạng thái<select value={status} onChange={(e) => setStatus(e.target.value)}><option value="">Tất cả</option>{Object.entries(bookingStatus).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select></label>
+      <button onClick={() => { setEditingId(null); setCustomerId(''); setSelected([]); setStartDate(''); setEndDate(''); setShowForm(true); }}>Tạo đơn tại quầy</button>
     </div>
     {message && <p className="message" role="status">{message}</p>}
-    {showForm && <div className="form-box"><h2>{editingId ? `Sá»­a Ä‘Æ¡n #${editingId}` : 'Táº¡o Ä‘Æ¡n táº¡i quáº§y'}</h2><form className="form-grid" onSubmit={create}>
-      <label>KhÃ¡ch hÃ ng<select value={customerId} onChange={(e) => setCustomerId(e.target.value)} required><option value="">Chá»n khÃ¡ch hÃ ng</option>{customers.filter((c) => c.customerStatus === 1).map((c) => <option key={c.customerId} value={c.customerId}>{c.customerFullName} ({c.emailAddress})</option>)}</select></label>
-      <label>NgÃ y nháº­n<input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} min={today()} required /></label>
-      <label>NgÃ y tráº£<input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} min={startDate || today()} required /></label>
-      <fieldset className="full"><legend>Chá»n má»™t hoáº·c nhiá»u phÃ²ng</legend>{rooms.map((r) => <label className="checkbox-label" key={r.roomId}>
-        <input type="checkbox" checked={selected.includes(r.roomId)} onChange={() => setSelected(selected.includes(r.roomId) ? selected.filter((id) => id !== r.roomId) : [...selected, r.roomId])} /> PhÃ²ng {r.roomNumber} ({r.roomTypeName})
-      </label>)}<p className="hint">Há»‡ thá»‘ng kiá»ƒm tra trÃ¹ng lá»‹ch khi lÆ°u Ä‘Æ¡n.</p></fieldset>
-      <div className="actions full"><button disabled={busy}>{busy ? 'Äang táº¡o...' : 'LÆ°u Ä‘Æ¡n'}</button><button type="button" className="secondary" onClick={() => setShowForm(false)}>ÄÃ³ng</button></div>
+    {showForm && <div className="form-box"><h2>{editingId ? `Sửa đơn #${editingId}` : 'Tạo đơn tại quầy'}</h2><form className="form-grid" onSubmit={create}>
+      <label>Khách hàng<select value={customerId} onChange={(e) => setCustomerId(e.target.value)} required><option value="">Chọn khách hàng</option>{customers.filter((c) => c.customerStatus === 1).map((c) => <option key={c.customerId} value={c.customerId}>{c.customerFullName} ({c.emailAddress})</option>)}</select></label>
+      <label>Ngày nhận<input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} min={today()} required /></label>
+      <label>Ngày trả<input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} min={startDate || today()} required /></label>
+      <fieldset className="full"><legend>Chọn một hoặc nhiều phòng</legend>{rooms.map((r) => <label className="checkbox-label" key={r.roomId}>
+        <input type="checkbox" checked={selected.includes(r.roomId)} onChange={() => setSelected(selected.includes(r.roomId) ? selected.filter((id) => id !== r.roomId) : [...selected, r.roomId])} /> Phòng {r.roomNumber} ({r.roomTypeName})
+      </label>)}<p className="hint">Hệ thống kiểm tra trùng lịch khi lưu đơn.</p></fieldset>
+      <div className="actions full"><button disabled={busy}>{busy ? 'Đang tạo...' : 'Lưu đơn'}</button><button type="button" className="secondary" onClick={() => setShowForm(false)}>Đóng</button></div>
     </form></div>}
     <BookingTable bookings={visibleBookings} staff onStatus={changeStatus} onDelete={remove} onEdit={edit} busy={busy} />
   </section>;

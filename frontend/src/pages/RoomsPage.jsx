@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Author: HoangTLT
  */
 import { useEffect, useState } from 'react';
@@ -33,7 +33,7 @@ export default function RoomsPage({ session }) {
 
   async function book() {
     setMessage('');
-    if (!startDate || !endDate || nights(startDate, endDate) <= 0) { setMessage('Chá»n ngÃ y nháº­n vÃ  ngÃ y tráº£ há»£p lá»‡ trÆ°á»›c khi Ä‘áº·t.'); return; }
+    if (!startDate || !endDate || nights(startDate, endDate) <= 0) { setMessage('Chọn ngày nhận và ngày trả hợp lệ trước khi đặt.'); return; }
     setBusy(true);
     try {
       await api.post('/customer/bookings', { rooms: selected.map((roomId) => ({ roomId, startDate, endDate })) });
@@ -45,25 +45,25 @@ export default function RoomsPage({ session }) {
   const numberOfNights = startDate && endDate ? Math.max(0, nights(startDate, endDate)) : 0;
   const total = rooms.filter((room) => selected.includes(room.roomId)).reduce((sum, room) => sum + room.roomPricePerDay * numberOfNights, 0);
 
-  return <section className="panel"><h1>Danh sÃ¡ch phÃ²ng</h1>
-    <p>Chá»n ngÃ y lÆ°u trÃº Ä‘á»ƒ tÃ¬m phÃ²ng trá»‘ng. CÃ³ thá»ƒ Ä‘áº·t nhiá»u phÃ²ng trong cÃ¹ng má»™t Ä‘Æ¡n.</p>
+  return <section className="panel"><h1>Danh sách phòng</h1>
+    <p>Chọn ngày lưu trú để tìm phòng trống. Có thể đặt nhiều phòng trong cùng một đơn.</p>
     <form className="filters" onSubmit={load}>
-      <label>Sá»‘ phÃ²ng<input value={keyword} onChange={(e) => setKeyword(e.target.value)} placeholder="VÃ­ dá»¥: 101" /></label>
-      <label>NgÃ y nháº­n<input type="date" value={startDate} min={today()} onChange={(e) => { setStartDate(e.target.value); setSelected([]); }} /></label>
-      <label>NgÃ y tráº£<input type="date" value={endDate} min={startDate || today()} onChange={(e) => { setEndDate(e.target.value); setSelected([]); }} /></label>
-      <button disabled={loading}>TÃ¬m phÃ²ng</button>
+      <label>Số phòng<input value={keyword} onChange={(e) => setKeyword(e.target.value)} placeholder="Ví dụ: 101" /></label>
+      <label>Ngày nhận<input type="date" value={startDate} min={today()} onChange={(e) => { setStartDate(e.target.value); setSelected([]); }} /></label>
+      <label>Ngày trả<input type="date" value={endDate} min={startDate || today()} onChange={(e) => { setEndDate(e.target.value); setSelected([]); }} /></label>
+      <button disabled={loading}>Tìm phòng</button>
     </form>
     {message && <p className="message" role="alert">{message}</p>}
-    {loading ? <p>Äang táº£i phÃ²ng...</p> : !rooms.length ? <p>KhÃ´ng cÃ³ phÃ²ng phÃ¹ há»£p.</p> : <div className="table-wrap"><table>
-      <thead><tr>{session?.role === 'CUSTOMER' && <th>Chá»n</th>}<th>PhÃ²ng</th><th>Loáº¡i phÃ²ng</th><th>Sá»‘ ngÆ°á»i tá»‘i Ä‘a</th><th>MÃ´ táº£</th><th>GiÃ¡ / Ä‘Ãªm</th></tr></thead>
+    {loading ? <p>Đang tải phòng...</p> : !rooms.length ? <p>Không có phòng phù hợp.</p> : <div className="table-wrap"><table>
+      <thead><tr>{session?.role === 'CUSTOMER' && <th>Chọn</th>}<th>Phòng</th><th>Loại phòng</th><th>Số người tối đa</th><th>Mô tả</th><th>Giá / đêm</th></tr></thead>
       <tbody>{rooms.map((r) => <tr key={r.roomId}>
-        {session?.role === 'CUSTOMER' && <td><input aria-label={`Chá»n phÃ²ng ${r.roomNumber}`} type="checkbox" checked={selected.includes(r.roomId)} onChange={() => toggle(r.roomId)} /></td>}
+        {session?.role === 'CUSTOMER' && <td><input aria-label={`Chọn phòng ${r.roomNumber}`} type="checkbox" checked={selected.includes(r.roomId)} onChange={() => toggle(r.roomId)} /></td>}
         <td>{r.roomNumber}</td><td>{r.roomTypeName}</td><td>{r.roomMaxCapacity}</td><td>{r.roomDetailDescription}</td><td>{money(r.roomPricePerDay)}</td>
       </tr>)}</tbody>
     </table></div>}
-    {session?.role === 'CUSTOMER' && <div className="booking-summary"><p>ÄÃ£ chá»n {selected.length} phÃ²ng Â· {numberOfNights} Ä‘Ãªm Â· Táº¡m tÃ­nh: <strong>{money(total)}</strong></p>
-      <button disabled={busy || !selected.length} onClick={book}>{busy ? 'Äang Ä‘áº·t...' : 'Äáº·t cÃ¡c phÃ²ng Ä‘Ã£ chá»n'}</button>
+    {session?.role === 'CUSTOMER' && <div className="booking-summary"><p>Đã chọn {selected.length} phòng · {numberOfNights} đêm · Tạm tính: <strong>{money(total)}</strong></p>
+      <button disabled={busy || !selected.length} onClick={book}>{busy ? 'Đang đặt...' : 'Đặt các phòng đã chọn'}</button>
     </div>}
-    {!session && <p><Link to="/login">ÄÄƒng nháº­p</Link> hoáº·c <Link to="/register">Ä‘Äƒng kÃ½</Link> Ä‘á»ƒ Ä‘áº·t phÃ²ng.</p>}
+    {!session && <p><Link to="/login">Đăng nhập</Link> hoặc <Link to="/register">đăng ký</Link> để đặt phòng.</p>}
   </section>;
 }

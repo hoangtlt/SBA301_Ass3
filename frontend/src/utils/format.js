@@ -1,8 +1,8 @@
-﻿/**
+/**
  * Author: HoangTLT
  */
 export const money = (value) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
-export const bookingStatus = { CONFIRMED: 'ÄÃ£ xÃ¡c nháº­n', COMPLETED: 'ÄÃ£ hoÃ n táº¥t', CANCELLED: 'ÄÃ£ há»§y' };
+export const bookingStatus = { CONFIRMED: 'Đã xác nhận', COMPLETED: 'Đã hoàn tất', CANCELLED: 'Đã hủy' };
 
 // Local calendar date; avoid UTC date shifts near midnight in Vietnam.
 export function today() {

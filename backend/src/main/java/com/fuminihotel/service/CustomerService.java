@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Author: HoangTLT
  */
 package com.fuminihotel.service;
@@ -41,7 +41,7 @@ public class CustomerService {
     }
 
     public Customer findEntity(Long id) {
-        return customers.findById(id).orElseThrow(() -> new ApiException(NOT_FOUND, "KhÃ´ng tÃ¬m tháº¥y khÃ¡ch hÃ ng"));
+        return customers.findById(id).orElseThrow(() -> new ApiException(NOT_FOUND, "Không tìm thấy khách hàng"));
     }
 
     @Transactional(readOnly = true)
@@ -69,10 +69,10 @@ public class CustomerService {
     private void copy(Customer customer, CustomerRequest request) {
         String email = request.emailAddress().trim().toLowerCase(Locale.ROOT);
         if (email.equalsIgnoreCase(staffEmail))
-            throw new ApiException(CONFLICT, "Email nÃ y dÃ nh cho Staff");
+            throw new ApiException(CONFLICT, "Email này dành cho Staff");
         customers.findByEmailAddressIgnoreCase(email).ifPresent(existing -> {
             if (!existing.getCustomerId().equals(customer.getCustomerId())) {
-                throw new ApiException(CONFLICT, "Email Ä‘Ã£ Ä‘Æ°á»£c sá»­ dá»¥ng");
+                throw new ApiException(CONFLICT, "Email đã được sử dụng");
             }
         });
         customer.setCustomerFullName(request.customerFullName().trim());
@@ -84,11 +84,11 @@ public class CustomerService {
     private void changePassword(Customer customer, String password, boolean required) {
         if (password == null || password.isBlank()) {
             if (required)
-                throw new ApiException(BAD_REQUEST, "Cáº§n nháº­p máº­t kháº©u tá»« 8 Ä‘áº¿n 72 kÃ½ tá»±");
+                throw new ApiException(BAD_REQUEST, "Cần nhập mật khẩu từ 8 đến 72 ký tự");
             return;
         }
         if (password.length() < 8 || password.getBytes(StandardCharsets.UTF_8).length > 72) {
-            throw new ApiException(BAD_REQUEST, "Máº­t kháº©u cáº§n Ã­t nháº¥t 8 kÃ½ tá»± vÃ  tá»‘i Ä‘a 72 byte");
+            throw new ApiException(BAD_REQUEST, "Mật khẩu cần ít nhất 8 ký tự và tối đa 72 byte");
         }
         customer.setPassword(encoder.encode(password));
     }

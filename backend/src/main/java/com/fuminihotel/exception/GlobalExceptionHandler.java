@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Author: HoangTLT
  */
 package com.fuminihotel.exception;
@@ -24,17 +24,17 @@ public class GlobalExceptionHandler {
         Map<String, String> fields = new LinkedHashMap<>();
         exception.getBindingResult().getFieldErrors().forEach(error ->
                 fields.putIfAbsent(error.getField(), error.getDefaultMessage()));
-        return ResponseEntity.badRequest().body(Map.of("message", "Dá»¯ liá»‡u khÃ´ng há»£p lá»‡", "errors", fields));
+        return ResponseEntity.badRequest().body(Map.of("message", "Dữ liệu không hợp lệ", "errors", fields));
     }
 
     @ExceptionHandler({HttpMessageNotReadableException.class, HandlerMethodValidationException.class,
             org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class})
     public ResponseEntity<?> malformedData(Exception exception) {
-        return ResponseEntity.badRequest().body(Map.of("message", "Sai kiá»ƒu dá»¯ liá»‡u, ngÃ y hoáº·c tráº¡ng thÃ¡i"));
+        return ResponseEntity.badRequest().body(Map.of("message", "Sai kiểu dữ liệu, ngày hoặc trạng thái"));
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<?> duplicateOrReferencedData(DataIntegrityViolationException exception) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "Dá»¯ liá»‡u bá»‹ trÃ¹ng hoáº·c Ä‘ang Ä‘Æ°á»£c sá»­ dá»¥ng"));
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "Dữ liệu bị trùng hoặc đang được sử dụng"));
     }
 }
