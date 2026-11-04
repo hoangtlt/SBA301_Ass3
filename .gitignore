@@ -1,0 +1,11 @@
+**/target/
+**/node_modules/
+**/dist/
+.idea/
+*.iml
+.env
+tmp/
+*.log
+.tools/
+.vscode/
+.github/
